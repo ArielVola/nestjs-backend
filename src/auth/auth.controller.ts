@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { ChangePasswordAuthDto } from './dto/change-password.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ResetAuthDto } from './dto/reset-password.dto';
@@ -34,6 +35,11 @@ export class AuthController {
   @Post('reset')
   resetPasswordAccount(@Body() resetAuthDto: ResetAuthDto ) {
     return this.authService.resetPasswordAccount(resetAuthDto);
+  }
+
+  @Post('change-password')
+  changePasswordAccount(@Body() changePasswordDto: ChangePasswordAuthDto) {
+    return this.authService.changePasswordAccount(changePasswordDto);
   }
 
 }

@@ -28,6 +28,10 @@ export class Users {
 
   @Prop()
   verifyCode: number;
+
+  @Prop()
+  resetCode: string;
+
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);

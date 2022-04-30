@@ -11,6 +11,7 @@ import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { ResetAuthDto } from './dto/reset-password.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PUBLIC_RESTORE_URL_dev, PUBLIC_VERIFY_URL_dev } from 'src/config/mailer.constants';
+import { ChangePasswordAuthDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,6 @@ export class AuthService {
 
     const { _id } = await this.userModel.create(userObject);
     
-    // send mail with defined transport object
     await this.sendEmail('"Email verification NameOfMyApp" <myapp@gmail.com>', userObject.email, "Verify your email with us ✔", `
     <h2>Thank you for registering with us!</h2>   
     <hr/>
@@ -121,7 +121,25 @@ export class AuthService {
       <span>${PUBLIC_RESTORE_URL_dev}/${securityCode}</span>
     `);
 
-    return {mgs: 'Check your email to continue with the password restore'};
+    let mutableAccountData = account;
+    mutableAccountData.resetCode = securityCode;
+    
+    await this.userModel.updateOne({_id: account._id}, mutableAccountData);
+
+    return {msg: 'Check your email to continue with the password restore'};
+  }
+
+  async changePasswordAccount(changeDto: ChangePasswordAuthDto) {
+    const { resetCode, newPassword } = changeDto;
+
+    const findUser = await this.userModel.findOne({ resetCode });
+    
+    if(!findUser || !findUser.emailVerified) throw new HttpException('Something went wrong', 403);
+
+    const plainToHash = await hash(newPassword, 10);
+    await this.userModel.updateOne({ resetCode }, { password: plainToHash});
+
+    return {msg: 'Password change with success'}
   }
 
 }
