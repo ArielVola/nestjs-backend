@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/src/config
 
 # Logs
 logs
@@ -11,8 +12,6 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# Sentitive 
-/src/config
 
 # OS
 .DS_Store
